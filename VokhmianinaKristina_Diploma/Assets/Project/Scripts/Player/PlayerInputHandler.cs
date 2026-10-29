@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Project.Player.Commands;
 
 namespace Project.Player
 {
@@ -8,7 +9,8 @@ namespace Project.Player
         private PlayerInputActions _inputActions;
         
         public Vector2 MoveInput { get; private set; }
-        public bool JumpPressed { get; private set; }
+        //public bool JumpPressed { get; private set; }
+        public ICommand CurrentCommand { get; private set; }
         public bool SlidePressed { get; private set; }
 
         private void Awake()
@@ -18,7 +20,8 @@ namespace Project.Player
             _inputActions.Player.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
             _inputActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
-            _inputActions.Player.Jump.performed += ctx => JumpPressed = true;
+            //_inputActions.Player.Jump.performed += ctx => JumpPressed = true;
+            _inputActions.Player.Jump.performed += ctx => CurrentCommand = new JumpCommand();
             _inputActions.Player.Slide.performed += ctx => SlidePressed = true;
         }
 
@@ -27,8 +30,13 @@ namespace Project.Player
 
         private void LateUpdate()
         {
-            JumpPressed = false;
+            //JumpPressed = false;
             SlidePressed = false;
+        }
+
+        public void ClearCommand()
+        {
+            CurrentCommand = null;
         }
     }
 }
