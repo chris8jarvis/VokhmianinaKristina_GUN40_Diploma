@@ -10,8 +10,8 @@ namespace Project.Player
         
         public Vector2 MoveInput { get; private set; }
         //public bool JumpPressed { get; private set; }
-        public ICommand CurrentCommand { get; private set; }
-        public bool SlidePressed { get; private set; }
+        public ICommand JumpCommand { get; private set; }
+        public bool SlideRequested { get; private set; }
 
         private void Awake()
         {
@@ -21,8 +21,8 @@ namespace Project.Player
             _inputActions.Player.Move.canceled += ctx => MoveInput = Vector2.zero;
 
             //_inputActions.Player.Jump.performed += ctx => JumpPressed = true;
-            _inputActions.Player.Jump.performed += ctx => CurrentCommand = new JumpCommand();
-            _inputActions.Player.Slide.performed += ctx => SlidePressed = true;
+            _inputActions.Player.Jump.performed += ctx => JumpCommand = new JumpCommand();
+            _inputActions.Player.Slide.performed += ctx => SlideRequested = true;
         }
 
         private void OnEnable() => _inputActions.Enable();
@@ -31,12 +31,9 @@ namespace Project.Player
         private void LateUpdate()
         {
             //JumpPressed = false;
-            SlidePressed = false;
+            SlideRequested = false;
         }
 
-        public void ClearCommand()
-        {
-            CurrentCommand = null;
-        }
+        public void ClearJumpCommand() => JumpCommand = null;
     }
 }

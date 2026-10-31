@@ -15,12 +15,19 @@ namespace Project.Player
         [SerializeField] private float jumpForce = 8f;
         [SerializeField] private float gravity = -20f;
 
+        [Header("Slide Settings")]
+        [SerializeField] private float slideDuration = 0.8f;
+        [SerializeField] private float slideHeight = 1f;
+
         private PlayerInputHandler _inputHandler;
         private CharacterController _controller;
         
         private int _currentLane = 1;
         private float _currentSpeed;
         private float _verticalVelocity;
+
+        private SlideCommand _activeSlideCommand;
+        private float _normalHeight;
 
         [Inject]
         public void Construct(PlayerInputHandler inputHandler)
@@ -32,6 +39,7 @@ namespace Project.Player
         {
             _controller = GetComponent<CharacterController>();
             _currentSpeed = forwardSpeed;
+            _normalHeight = _controller.height;
         }
 
         private void Update()
@@ -49,23 +57,41 @@ namespace Project.Player
             float targetX = (_currentLane - 1) * laneDistance;
             moveVector.x = (targetX - transform.position.x) * sideSpeed;
 
-            //Прыжок и гравитация
+            //Прыжок
             if (_controller.isGrounded)
             {
                 if (_verticalVelocity < 0) _verticalVelocity = -2f; // Прижимаем к земле
 
-                //Проверка комманды
-                if (_inputHandler.CurrentCommand is JumpCommand)
+                if (_inputHandler.JumpCommand != null)
                 {
                     _verticalVelocity = jumpForce;
-                    _inputHandler.ClearCommand();
+                    _inputHandler.ClearJumpCommand();
                 }
             }
-            
             _verticalVelocity += gravity * Time.deltaTime;
             moveVector.y = _verticalVelocity;
 
-            //Применяем движение
+
+            // Подкат
+            // Если игрок нажал S и находится не в подкате
+            if (_inputHandler.SlideRequested && _activeSlideCommand == null && _controller.isGrounded)
+            {
+                _activeSlideCommand = new SlideCommand(_controller, slideDuration, _normalHeight, slideHeight);
+                _activeSlideCommand.Execute();
+            }
+
+            // Если подкат уже активен - обновляем его таймер
+            if (_activeSlideCommand != null)
+            {
+                _activeSlideCommand.Tick(Time.deltaTime);
+                
+                if (Mathf.Approximately(_controller.height, _normalHeight))
+                {
+                    _activeSlideCommand = null;
+                }
+            }
+
+            // Движение
             _controller.Move(moveVector * Time.deltaTime);
         }
     }
