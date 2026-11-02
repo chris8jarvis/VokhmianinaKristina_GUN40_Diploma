@@ -12,7 +12,7 @@ namespace Project.Player.Commands
         private readonly float _slideHeight;
         
         private float _timer;
-        private bool _isSliding;
+        public bool IsFinished { get; private set; }
 
         public SlideCommand(CharacterController controller, float duration, float normalHeight, float slideHeight)
         {
@@ -24,9 +24,7 @@ namespace Project.Player.Commands
 
         public void Execute()
         {
-            if (_isSliding) return; // Если уже скользим - не начинаем заново
-
-            _isSliding = true;
+            IsFinished = false;
             _timer = _slideDuration;
             
             // Уменьшаем высоту контроллера, центрируем его
@@ -38,7 +36,7 @@ namespace Project.Player.Commands
         // Но у Command нет Update, поэтому добавляем метод, который будет вызывать PlayerMovement
         public void Tick(float deltaTime)
         {
-            if (!_isSliding) return;
+            if (IsFinished) return;
 
             _timer -= deltaTime;
             
@@ -50,7 +48,7 @@ namespace Project.Player.Commands
 
         private void StopSlide()
         {
-            _isSliding = false;
+            IsFinished = true;
             _controller.height = _normalHeight;
             _controller.center = new Vector3(0, _normalHeight / 2f, 0);
         }

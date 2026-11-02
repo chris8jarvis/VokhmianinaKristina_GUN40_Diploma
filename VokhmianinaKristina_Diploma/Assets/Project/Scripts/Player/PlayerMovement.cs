@@ -85,7 +85,7 @@ namespace Project.Player
             {
                 _activeSlideCommand.Tick(Time.deltaTime);
                 
-                if (Mathf.Approximately(_controller.height, _normalHeight))
+                if (_activeSlideCommand.IsFinished) 
                 {
                     _activeSlideCommand = null;
                 }
