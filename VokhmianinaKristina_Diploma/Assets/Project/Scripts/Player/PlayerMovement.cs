@@ -28,6 +28,8 @@ namespace Project.Player
 
         private SlideCommand _activeSlideCommand;
         private float _normalHeight;
+        public bool IsJumping => !_controller.isGrounded; 
+        public bool IsSliding => _activeSlideCommand != null;
 
         [Inject]
         public void Construct(PlayerInputHandler inputHandler)

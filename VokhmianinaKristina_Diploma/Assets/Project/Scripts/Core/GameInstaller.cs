@@ -9,6 +9,7 @@ namespace Project.Core
         public override void InstallBindings()
         {
             Container.Bind<PlayerInputHandler>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<PlayerMovement>().FromComponentInHierarchy().AsSingle();
         }
     }
 }
