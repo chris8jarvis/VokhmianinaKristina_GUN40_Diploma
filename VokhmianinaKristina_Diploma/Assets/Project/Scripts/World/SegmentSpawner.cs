@@ -15,12 +15,14 @@ namespace Project.World
 
         private List<GameObject> _segmentPool = new List<GameObject>();
         private float _spawnZ = 0f; //Где создаем следующий сегмент
+        private SegmentFactory _segmentFactory;
 
         [Inject]
-        public void Construct(PlayerMovement playerMovement)
+        public void Construct(PlayerMovement playerMovement, SegmentFactory segmentFactory)
         {
             //Через Zenject получаем доступ к игроку
             _player = playerMovement.transform;
+             _segmentFactory = segmentFactory;
         }
 
         private void Start()
@@ -66,6 +68,7 @@ namespace Project.World
 
             //Ставим сегмент на нужную позицию и включаем
             segment.transform.position = new Vector3(0, 0, _spawnZ);
+            _segmentFactory.PopulateSegment(segment.transform, 0f);
             segment.SetActive(true);
 
             //Сдвигаем точку спавна вперед
