@@ -12,6 +12,7 @@ namespace Project.Core
         [SerializeField] private GameObject _lowObstaclePrefab;
         [SerializeField] private GameObject _highObstaclePrefab;
         [SerializeField] private GameObject _slideObstaclePrefab;
+        [SerializeField] private GameObject _coinPrefab;
         public override void InstallBindings()
         {
             Container.Bind<PlayerInputHandler>().FromComponentInHierarchy().AsSingle();
@@ -19,7 +20,10 @@ namespace Project.Core
 
             Container.Bind<SegmentFactory>()
                 .AsSingle()
-                .WithArguments(_lowObstaclePrefab, _highObstaclePrefab, _slideObstaclePrefab);
+                .WithArguments(_lowObstaclePrefab, _highObstaclePrefab, _slideObstaclePrefab, _coinPrefab);
+            
+            Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
+
         }
     }
 }
