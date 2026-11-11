@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zenject;
 using Project.Player.Commands;
@@ -28,6 +29,8 @@ namespace Project.Player
 
         private SlideCommand _activeSlideCommand;
         private float _normalHeight;
+        public event Action OnPlayerDied;
+        public bool IsDead {get; private set; } = false;
         public bool IsJumping => !_controller.isGrounded; 
         public bool IsSliding => _activeSlideCommand != null;
 
@@ -46,6 +49,7 @@ namespace Project.Player
 
         private void Update()
         {
+            if (IsDead) return;
             //Движение вперед (ускорение)
             _currentSpeed += acceleration * Time.deltaTime;
             Vector3 moveVector = Vector3.forward * _currentSpeed;
@@ -95,6 +99,22 @@ namespace Project.Player
 
             // Движение
             _controller.Move(moveVector * Time.deltaTime);
+        }
+
+        public void Die()
+        {
+            if (IsDead) return;
+            IsDead = true;
+            OnPlayerDied?.Invoke();
+            Debug.Log("Player died");
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.gameObject.name.Contains("Obstacle") || hit.gameObject.CompareTag("Obstacle"))
+            {
+                Die();
+            }
         }
     }
 }

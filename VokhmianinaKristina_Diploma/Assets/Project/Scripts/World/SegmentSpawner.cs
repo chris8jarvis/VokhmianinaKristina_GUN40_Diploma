@@ -22,7 +22,8 @@ namespace Project.World
         {
             //Через Zenject получаем доступ к игроку
             _player = playerMovement.transform;
-             _segmentFactory = segmentFactory;
+            _segmentFactory = segmentFactory;
+            playerMovement.OnPlayerDied += StopGame; 
         }
 
         private void Start()
@@ -87,6 +88,12 @@ namespace Project.World
                     }
                 }
             }
+        }
+
+        private void StopGame()
+        {
+            Time.timeScale = 0f;
+            Debug.Log("Game over");
         }
     }
 }
