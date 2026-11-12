@@ -1,12 +1,14 @@
 using UnityEngine;
 using Zenject;
 using Project.World;
+using TMPro;
 
 namespace Project.Core
 {
     public class GameManager : MonoBehaviour
     {
         public int Coins { get; private set; } = 0;
+        [SerializeField] private TextMeshProUGUI _coinText;
 
         private void OnEnable()
         {
@@ -18,10 +20,21 @@ namespace Project.Core
             Coin.OnCoinCollected -= AddCoin;
         }
 
+         private void Start()
+        {
+            UpdateUI();
+        }
         private void AddCoin()
         {
             Coins++;
-            Debug.Log($"Монет собрано: {Coins}");
+            UpdateUI();
+        }
+        private void UpdateUI()
+        {
+            if (_coinText != null)
+            {
+                _coinText.text = $"Coins: {Coins}";
+            }
         }
     }
 }
