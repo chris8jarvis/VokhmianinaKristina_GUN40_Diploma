@@ -177,6 +177,15 @@ namespace Project.Core
             PlayerPrefs.Save();
             UpdateUI();
         }
+
+        //Метод для списания монет
+        public void SpendCoins(int amount)
+        {
+            TotalCoins -= amount;
+            PlayerPrefs.SetInt("TotalCoins", TotalCoins);
+            PlayerPrefs.Save();
+            UpdateUI();
+        }
         private void HandleGameOver()
         {
             if (IsGameOver) return;

@@ -2,6 +2,7 @@ using UnityEngine;
 using Zenject;
 using Project.Player;
 using Project.World;
+using Project.Core.Shop;
 
 namespace Project.Core
 {
@@ -23,6 +24,7 @@ namespace Project.Core
                 .WithArguments(_lowObstaclePrefab, _highObstaclePrefab, _slideObstaclePrefab, _coinPrefab);
             
             Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<ShopService>().AsSingle(); 
 
         }
     }
