@@ -15,13 +15,15 @@ namespace Project.Core
         [Header("UI Settings")]
         [SerializeField] private TextMeshProUGUI _coinText;  //Текст для монет
         [SerializeField] private TextMeshProUGUI _scoreText; //Текст для очков
+        [SerializeField] private TextMeshProUGUI _walletText; //Текст для кошелька
         [SerializeField] private GameObject _gameOverPanel; //Меню окончания игры
         [SerializeField] private GameObject _pausePanel; //Панель паузы
         [SerializeField] private GameObject _mainMenuPanel; //Главное меню
-        [SerializeField] private TextMeshProUGUI _highScoreText; //Ссылка на текст рекорда
+        [SerializeField] private TextMeshProUGUI _highScoreText; //Текст для рекорда
 
         // --- Данные ---
         public int Coins { get; private set; } = 0;
+        public int TotalCoins { get; private set; } = 0; //Кошелек
         public int Score { get; private set; } = 0; //Текущий счет
         public int HighScore { get; private set; } = 0; //Рекорд
         public bool IsGameOver { get; private set; } = false;//Флаг, что игра окончена
@@ -67,6 +69,14 @@ namespace Project.Core
         {
             //Загружаем рекорд из сохранений при старте
             HighScore = PlayerPrefs.GetInt("HighScore", 0);
+            
+            if (_highScoreText != null) _highScoreText.text = $"Record: {HighScore}";
+
+            //Загрузка кошелька
+            TotalCoins = PlayerPrefs.GetInt("TotalCoins", 0);
+
+            //Обнуление монет для текущего забега
+            Coins = 0; 
 
             //Запоминаем где находится игрок при старте
             _startZ = _player.transform.position.z;
@@ -77,6 +87,7 @@ namespace Project.Core
             _mainMenuPanel.SetActive(true);
             
             Time.timeScale = 0f;
+            UpdateUI();
         }
         private void Update()
         {
@@ -160,11 +171,15 @@ namespace Project.Core
 
         private void AddCoin()
         {
-            Coins++;
+            Coins++; //Увеличение текущих монет
+            TotalCoins++; //Увеличение кошелька
+            PlayerPrefs.SetInt("TotalCoins", TotalCoins);
+            PlayerPrefs.Save();
             UpdateUI();
         }
         private void HandleGameOver()
         {
+            if (IsGameOver) return;
             IsGameOver = true;
 
             //Проверяем, побит ли рекорд
@@ -187,8 +202,10 @@ namespace Project.Core
         }
         private void UpdateUI()
         {
+            //Показываем текущие монеты в игре
             if (_coinText != null) _coinText.text = $"Coins: {Coins}";
             if (_scoreText != null) _scoreText.text = $"Score: {Score}";
+            if (_walletText != null) _walletText.text = $"Wallet: {TotalCoins}";
         }
         
         //Геттеры для состояний (чтобы они имели доступ к панелям)
