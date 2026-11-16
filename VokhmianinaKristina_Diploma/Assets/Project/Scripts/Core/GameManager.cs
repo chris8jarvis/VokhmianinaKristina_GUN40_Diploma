@@ -17,6 +17,7 @@ namespace Project.Core
         public int HighScore { get; private set; } = 0; //Рекорд
         public bool IsGameOver { get; private set; } = false;//Флаг, что игра окончена
 
+        private float _startZ; //Запоминаем позицию игрока
         //Ссылка на игрока (внедряем через Zenject)
         private PlayerMovement _player;
 
@@ -44,6 +45,8 @@ namespace Project.Core
         {
             //Загружаем рекорд из сохранений при старте
             HighScore = PlayerPrefs.GetInt("HighScore", 0);
+
+            _startZ = _player.transform.position.z; //Запоминаем где находится игрок при старте
             
             //Выключаем панель Game Over при старте игры
             if (_gameOverPanel != null) 
@@ -57,8 +60,12 @@ namespace Project.Core
             //Если игра не окончена, считаем счет
             if (!IsGameOver)
             {
-                //Берем позицию игрока по Z и округляем до целого
-                Score = Mathf.FloorToInt(_player.transform.position.z);
+                //Считаем разницу между текущей позицией и стартовой
+                //(Текущая Z - Стартовая Z) = пройденная дистанция
+                float distance = _player.transform.position.z - _startZ;
+                
+                //Округляем и записываем в счет
+                Score = Mathf.Max(0, Mathf.FloorToInt(distance));
                 UpdateUI();
             }
         }
