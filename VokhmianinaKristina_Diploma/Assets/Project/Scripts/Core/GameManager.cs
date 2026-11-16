@@ -18,6 +18,7 @@ namespace Project.Core
         [SerializeField] private GameObject _gameOverPanel; //Меню окончания игры
         [SerializeField] private GameObject _pausePanel; //Панель паузы
         [SerializeField] private GameObject _mainMenuPanel; //Главное меню
+        [SerializeField] private TextMeshProUGUI _highScoreText; //Ссылка на текст рекорда
 
         // --- Данные ---
         public int Coins { get; private set; } = 0;
@@ -26,6 +27,7 @@ namespace Project.Core
         public bool IsGameOver { get; private set; } = false;//Флаг, что игра окончена
         private PlayerMovement _player; //Ссылка на игрока (внедряем через Zenject)
         private float _startZ; //Запоминаем позицию игрока
+        private float _restartTimer = 0f;
         private GameStateMachine _stateMachine; //Машина состояний
         // Ссылки на состояния
         private PlayState _playState;
@@ -75,12 +77,6 @@ namespace Project.Core
             _mainMenuPanel.SetActive(true);
             
             Time.timeScale = 0f;
-            //Выключаем панель Game Over при старте игры
-            // if (_gameOverPanel != null) 
-            // {
-            //     _gameOverPanel.SetActive(false);
-            // }
-            // UpdateUI(); //Обновляем экран
         }
         private void Update()
         {
@@ -95,6 +91,26 @@ namespace Project.Core
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 TogglePause();
+            }
+
+            //Хоткей рестарта (зажатие ~ на 1-2 секунды)
+            if (Input.GetKeyDown(KeyCode.BackQuote)) //BackQuote = клавиша ~ (тильда)
+            {
+                _restartTimer = 0f; //Начинаем отсчет
+            }
+
+            if (Input.GetKey(KeyCode.BackQuote)) //Если клавиша зажата
+            {
+                _restartTimer += Time.unscaledDeltaTime; //Считаем время (unscaled, чтобы работало даже на паузе)
+
+                if (_restartTimer >= 1.5f) //Если держим 1.5 секунды
+                {
+                    RestartGame();
+                }
+            }
+            else
+            {
+                _restartTimer = 0f; //Если отпустили — сбрасываем таймер
             }
         }
 
@@ -122,8 +138,18 @@ namespace Project.Core
         public void RestartGame()
         {
             //Перезагружаем текущую сцену
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.Log("Рестарт игры");
             Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public void ResetProgress()
+        {
+            PlayerPrefs.DeleteAll(); //Удаляем все сохранения
+            PlayerPrefs.Save();
+            Debug.Log("Прогресс сброшен");
+            //Перезагружаем сцену, чтобы обновить UI
+            RestartGame(); 
         }
 
         public void QuitGame()
@@ -140,25 +166,24 @@ namespace Project.Core
         private void HandleGameOver()
         {
             IsGameOver = true;
-            _stateMachine.ChangeState(_gameOverState);
 
             //Проверяем, побит ли рекорд
-            // if (Score > HighScore)
-            // {
-            //     HighScore = Score;
-            //     PlayerPrefs.SetInt("HighScore", HighScore);//Сохраняем
-            //     PlayerPrefs.Save(); //Принудительно сохраняем на диск
-            //     Debug.Log("New record!");
-            // }
+            if (Score > HighScore)
+            {
+                HighScore = Score;
+                PlayerPrefs.SetInt("HighScore", HighScore);
+                PlayerPrefs.Save();
+                Debug.Log("Новый рекорд");
+            }
 
-            // //Показываем панель Game Over
-            // if (_gameOverPanel != null)
-            // {
-            //     _gameOverPanel.SetActive(true);
-            // }
+            if (_highScoreText != null) 
+            {
+                _highScoreText.text = $"Record: {HighScore}";
+            }
 
-            // //Останавливаем время
-            // Time.timeScale = 0f;
+            if (_gameOverPanel != null) _gameOverPanel.SetActive(true);
+
+            Time.timeScale = 0f;
         }
         private void UpdateUI()
         {
