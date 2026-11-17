@@ -214,11 +214,13 @@ namespace Project.Core
         {
             _mainMenuPanel.SetActive(false); //Скрываем меню
             _shopPanel.SetActive(true); //Показываем магазин
+            Time.timeScale = 0f;
         }
         public void CloseShop()
         {
             _shopPanel.SetActive(false); //Скрываем магазин
             _mainMenuPanel.SetActive(true); //Показываем меню обратно
+            Time.timeScale = 1f;
         }
         private void UpdateUI()
         {
