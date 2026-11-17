@@ -5,6 +5,7 @@ using Project.Player;
 using Project.Core.States;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Project.Core.Upgrades;
 
 namespace Project.Core
 {
@@ -172,8 +173,16 @@ namespace Project.Core
 
         private void AddCoin()
         {
-            Coins++; //Увеличение текущих монет
-            TotalCoins++; //Увеличение кошелька
+            //Ищем компонент CoinMultiplier на игроке
+            CoinMultiplier multiplier = _player.GetComponent<CoinMultiplier>();
+            //Если нашли — берем его значение, если нет — умножаем на 1
+            int amount = (multiplier != null) ? multiplier.Multiplier : 1;
+            Coins += amount;
+            TotalCoins += amount;
+
+
+            // Coins++; //Увеличение текущих монет
+            // TotalCoins++; //Увеличение кошелька
             PlayerPrefs.SetInt("TotalCoins", TotalCoins);
             PlayerPrefs.Save();
             UpdateUI();

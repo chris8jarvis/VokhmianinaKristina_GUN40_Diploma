@@ -15,7 +15,18 @@ namespace Project.Player
 
         private void Start()
         {
-            _currentRadius = _baseRadius;
+            int magnetLevel = PlayerPrefs.GetInt("Magnet_Level", 0);
+
+            if (magnetLevel > 0)
+            {
+                //Если магнит куплен, вычисляем радиус (базовый + бонус за уровни)
+                _currentRadius = _baseRadius + (magnetLevel * 1.5f);
+            }
+            else
+            {
+                //Если не куплен, магнит не работает (радиус 0)
+                _currentRadius = 0f; 
+            }
         }
 
         private void Update()

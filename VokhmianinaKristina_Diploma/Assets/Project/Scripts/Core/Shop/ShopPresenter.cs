@@ -1,6 +1,7 @@
 using UnityEngine;
 using Zenject;
 using Project.Player;
+using Project.Core.Upgrades;
 
 namespace Project.Core.Shop
 {
@@ -57,6 +58,15 @@ namespace Project.Core.Shop
                         int level = _shopService.GetLevel(data);
                         float newRadius = 5f + (level * 1.5f);
                         magnet.SetRadius(newRadius);
+                    }
+                }
+                if (data.UpgradeName == "Multiplier")
+                {
+                    CoinMultiplier mult = _gameManager.GetPlayer().GetComponent<CoinMultiplier>();
+                    if (mult != null)
+                    {
+                        int level = _shopService.GetLevel(data);
+                        mult.SetMultiplier(level);
                     }
                 }
             }
