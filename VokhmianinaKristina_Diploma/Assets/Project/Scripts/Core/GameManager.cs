@@ -20,6 +20,7 @@ namespace Project.Core
         [SerializeField] private GameObject _pausePanel; //Панель паузы
         [SerializeField] private GameObject _mainMenuPanel; //Главное меню
         [SerializeField] private TextMeshProUGUI _highScoreText; //Текст для рекорда
+        [SerializeField] private GameObject _shopPanel; //Панель магазина
 
         // --- Данные ---
         public int Coins { get; private set; } = 0;
@@ -208,6 +209,16 @@ namespace Project.Core
             if (_gameOverPanel != null) _gameOverPanel.SetActive(true);
 
             Time.timeScale = 0f;
+        }
+        public void OpenShop()
+        {
+            _mainMenuPanel.SetActive(false); //Скрываем меню
+            _shopPanel.SetActive(true); //Показываем магазин
+        }
+        public void CloseShop()
+        {
+            _shopPanel.SetActive(false); //Скрываем магазин
+            _mainMenuPanel.SetActive(true); //Показываем меню обратно
         }
         private void UpdateUI()
         {
