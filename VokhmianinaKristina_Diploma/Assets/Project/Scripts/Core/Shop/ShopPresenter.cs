@@ -1,5 +1,6 @@
 using UnityEngine;
 using Zenject;
+using Project.Player;
 
 namespace Project.Core.Shop
 {
@@ -45,6 +46,19 @@ namespace Project.Core.Shop
             if (success)
             {
                 Debug.Log($"Receive Upgrade: {data.UpgradeName}");
+                //Если купили магнит — улучшаем его
+                if (data.UpgradeName == "Magnet")
+                {
+                    //Получаем компонент Magnet на игроке
+                    Magnet magnet = _gameManager.GetPlayer().GetComponent<Magnet>();
+                    if (magnet != null)
+                    {
+                        //Вычисляем новый радиус: базовый + (уровень * 1.5)
+                        int level = _shopService.GetLevel(data);
+                        float newRadius = 5f + (level * 1.5f);
+                        magnet.SetRadius(newRadius);
+                    }
+                }
             }
             else
             {

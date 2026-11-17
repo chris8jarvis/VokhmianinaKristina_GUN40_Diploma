@@ -233,5 +233,6 @@ namespace Project.Core
         //Геттеры для состояний (чтобы они имели доступ к панелям)
         public GameObject GetGameOverPanel() => _gameOverPanel;
         public GameObject GetPausePanel() => _pausePanel;
+        public PlayerMovement GetPlayer() => _player;
     }
 }
