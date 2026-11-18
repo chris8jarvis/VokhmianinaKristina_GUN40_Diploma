@@ -77,15 +77,18 @@ namespace Project.World
         }
         private void ReturnOldSegments()
         {
-            foreach (GameObject segment in _segmentPool)
+            foreach (GameObject segmentObj in _segmentPool)
             {
-                if (segment.activeSelf)
+                if (segmentObj.activeSelf && segmentObj.transform.position.z < _player.position.z - 30f)
                 {
-                    //Если сегмент находится далеко позади игрока
-                    if (segment.transform.position.z < _player.position.z - 30f)
+                    //Возвращаем все объекты в пул через скрипт Segment
+                    Segment segment = segmentObj.GetComponent<Segment>();
+                    if (segment != null)
                     {
-                        segment.SetActive(false); //Выключаем сегмент и возвращаем в пул
+                        segment.Clear();
                     }
+                    
+                    segmentObj.SetActive(false);
                 }
             }
         }

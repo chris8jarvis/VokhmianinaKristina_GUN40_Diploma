@@ -55,21 +55,6 @@ namespace Project.Core
             _pauseState = new PauseState(this);
             _gameOverState = new GameOverState(this);
         }
-
-        private void OnEnable()
-        {
-            //Подписываемся на события
-            Coin.OnCoinCollected += AddCoin;
-            _player.OnPlayerDied += HandleGameOver; //Подписываемся на смерть игрока
-        }
-
-        private void OnDisable()
-        {
-            //Отписываемся
-            Coin.OnCoinCollected -= AddCoin;
-            _player.OnPlayerDied -= HandleGameOver;
-        }
-
          private void Start()
         {
             //Загружаем рекорд из сохранений при старте
@@ -90,10 +75,21 @@ namespace Project.Core
             _gameOverPanel.SetActive(false);
             _pausePanel.SetActive(false);
             _mainMenuPanel.SetActive(true);
+
+            Coin.OnCoinCollected += AddCoin;
+            _player.OnPlayerDied += HandleGameOver;
             
             Time.timeScale = 0f;
             UpdateUI();
         }
+
+        private void OnDisable()
+        {
+            //Отписываемся
+            Coin.OnCoinCollected -= AddCoin;
+            if (_player != null) _player.OnPlayerDied -= HandleGameOver;
+        }
+        
         private void Update()
         {
             if (IsGameOver) return;

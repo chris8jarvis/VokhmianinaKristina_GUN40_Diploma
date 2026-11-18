@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2843264376638741904}
   - component: {fileID: 3782215514702937297}
   - component: {fileID: 3801509040614463681}
+  - component: {fileID: 6993983949817514485}
   m_Layer: 0
   m_Name: HighObstacle
   m_TagString: Obstacle
@@ -105,3 +106,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6993983949817514485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5723123284718553597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64af339829bed104393f4834301bd3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

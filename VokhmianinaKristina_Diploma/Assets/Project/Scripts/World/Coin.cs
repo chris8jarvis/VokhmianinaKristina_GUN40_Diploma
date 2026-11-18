@@ -1,12 +1,28 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace Project.World
 {
-    public class Coin : MonoBehaviour
+    public class Coin : MonoBehaviour, IPoolable<IMemoryPool>, IPoolableObject
     {
         public static event Action OnCoinCollected;
-        private bool _isCollected = false; //Флаг, чтобы монетку нельзя было собрать дважды
+
+        private IMemoryPool _pool;
+        private bool _isCollected = false;
+
+        //Вызывается, когда монетку достали из пула
+        public void OnSpawned(IMemoryPool pool)
+        {
+            _pool = pool;
+            _isCollected = false;
+        }
+
+        //Вызывается, когда монетку вернули в пул
+        public void OnDespawned()
+        {
+            _isCollected = true;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -15,14 +31,29 @@ namespace Project.World
                 Collect();
             }
         }
-        //Публичный метод, чтобы Magnet мог его вызвать
+
         public void Collect()
         {
-            if (_isCollected) return; //Защита от двойного сбора монет
-            _isCollected = true;
-            
+            if (_isCollected) return;
             OnCoinCollected?.Invoke();
-            Destroy(gameObject); 
+            
+            if (_pool != null)
+            {
+                _pool.Despawn(this);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
+
+        //Метод для возврата в пул из Magnet
+        public void Despawn()
+        {
+            if (_pool == null) return;
+            _pool.Despawn(this);
+        }
+
+        public class Pool : MemoryPool<Coin> { }
     }
 }
