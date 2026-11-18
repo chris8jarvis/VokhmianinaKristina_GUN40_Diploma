@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 using Project.Player.Commands;
+using Project.Core.Upgrades;
 
 namespace Project.Player
 {
@@ -22,7 +23,7 @@ namespace Project.Player
 
         private PlayerInputHandler _inputHandler;
         private CharacterController _controller;
-        
+        private Shield _shield;
         private int _currentLane = 1;
         private float _currentSpeed;
         private float _verticalVelocity;
@@ -45,6 +46,7 @@ namespace Project.Player
             _controller = GetComponent<CharacterController>();
             _currentSpeed = forwardSpeed;
             _normalHeight = _controller.height;
+            _shield = GetComponent<Shield>();
         }
 
         private void Update()
@@ -113,6 +115,11 @@ namespace Project.Player
         {
             if (hit.gameObject.name.Contains("Obstacle") || hit.gameObject.CompareTag("Obstacle"))
             {
+                if (_shield != null && _shield.IsActive) 
+                {
+                    return; 
+                }
+                
                 Die();
             }
         }

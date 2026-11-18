@@ -69,6 +69,15 @@ namespace Project.Core.Shop
                         mult.SetMultiplier(level);
                     }
                 }
+                if (data.UpgradeName == "Shield")
+                {
+                    Shield shield = _gameManager.GetPlayer().GetComponent<Shield>();
+                    if (shield != null)
+                    {
+                        int level = _shopService.GetLevel(data);
+                        shield.SetLevel(level);
+                    }
+                }
             }
             else
             {
