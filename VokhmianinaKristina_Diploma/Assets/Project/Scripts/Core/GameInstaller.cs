@@ -26,22 +26,22 @@ namespace Project.Core
             Container.Bind<ShopService>().AsSingle();
 
             Container.BindMemoryPool<Coin, Coin.Pool>()
-                .WithInitialSize(30)
+                .WithInitialSize(100)
                 .FromComponentInNewPrefab(_coinPrefab)
                 .UnderTransformGroup("Pool_Coins");
 
             Container.BindMemoryPool<LowObstacle, LowObstacle.Pool>()
-                .WithInitialSize(5)
+                .WithInitialSize(20)
                 .FromComponentInNewPrefab(_lowObstaclePrefab)
                 .UnderTransformGroup("Pool_Low");
 
             Container.BindMemoryPool<HighObstacle, HighObstacle.Pool>()
-                .WithInitialSize(5)
+                .WithInitialSize(20)
                 .FromComponentInNewPrefab(_highObstaclePrefab)
                 .UnderTransformGroup("Pool_High");
 
             Container.BindMemoryPool<SlideObstacle, SlideObstacle.Pool>()
-                .WithInitialSize(5)
+                .WithInitialSize(20)
                 .FromComponentInNewPrefab(_slideObstaclePrefab)
                 .UnderTransformGroup("Pool_Slide");
 

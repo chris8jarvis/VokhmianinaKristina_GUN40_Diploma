@@ -20,7 +20,10 @@ namespace Project.World
         {
             foreach (var obj in _spawnedObjects)
             {
-                obj.Despawn();
+                if (obj is MonoBehaviour mono && mono.gameObject.activeSelf)
+                {
+                    obj.Despawn();
+                }
             }
             _spawnedObjects.Clear();
         }

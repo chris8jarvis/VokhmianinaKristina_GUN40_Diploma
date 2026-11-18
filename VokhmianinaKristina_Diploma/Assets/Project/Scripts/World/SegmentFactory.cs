@@ -34,6 +34,11 @@ namespace Project.World
             float xPosition = (randomLane - 1) * _laneDistance;
             int randomType = Random.Range(0, 3);
 
+            if (segment != null) 
+            {
+                segment.Clear(); 
+            }
+
             Obstacle obstacle = null;
             if (randomType == 0) obstacle = _lowPool.Spawn();
             else if (randomType == 1) obstacle = _highPool.Spawn();
@@ -42,7 +47,10 @@ namespace Project.World
             if (obstacle != null)
             {
                 obstacle.transform.position = new Vector3(xPosition, obstacle.transform.position.y, segmentTransform.position.z + zPosition);
-                segment.AddObject(obstacle);
+                if (segment != null) 
+                {
+                    segment.AddObject(obstacle);
+                }
             }
 
             //Монетки
@@ -56,8 +64,10 @@ namespace Project.World
                 Coin coin = _coinPool.Spawn();
                 coin.transform.position = new Vector3(coinX, 1f, segmentTransform.position.z + zPosition + 5f);
                 
-                //Добавляем в список сегмента
-                segment.AddObject(coin);
+                if (segment != null) 
+                {
+                    segment.AddObject(coin);
+                }
             }
         }
     }

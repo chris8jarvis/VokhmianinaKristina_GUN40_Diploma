@@ -67,12 +67,12 @@ namespace Project.World
                 _segmentPool.Add(segment);
             }
 
-            //Ставим сегмент на нужную позицию и включаем
             segment.transform.position = new Vector3(0, 0, _spawnZ);
-            _segmentFactory.PopulateSegment(segment.transform, 0f);
+
             segment.SetActive(true);
 
-            //Сдвигаем точку спавна вперед
+             _segmentFactory.PopulateSegment(segment.transform, 0f);
+
             _spawnZ += _segmentLength;
         }
         private void ReturnOldSegments()
