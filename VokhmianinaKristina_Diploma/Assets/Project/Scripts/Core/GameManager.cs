@@ -6,6 +6,8 @@ using Project.Core.States;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Project.Core.Upgrades;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace Project.Core
 {
@@ -22,6 +24,7 @@ namespace Project.Core
         [SerializeField] private GameObject _mainMenuPanel; //Главное меню
         [SerializeField] private TextMeshProUGUI _highScoreText; //Текст для рекорда
         [SerializeField] private GameObject _shopPanel; //Панель магазина
+        [SerializeField] private TextMeshProUGUI _countdownText; //Текст отсчета времени перед игрой
 
         // --- Данные ---
         public int Coins { get; private set; } = 0;
@@ -127,11 +130,30 @@ namespace Project.Core
             }
         }
 
-        public void StartGame()
+        public async void StartGame()
         {
             _mainMenuPanel.SetActive(false);
-            _stateMachine.ChangeState(_playState); //Переключаемся в игру
             Time.timeScale = 1f;
+            //Блокировка управления, чтобы игрок не бежал раньше времени отсчета
+            _player.enabled = false; 
+            _countdownText.gameObject.SetActive(true);
+
+            //Отсчет
+            for (int i = 3; i > 0; i--)
+            {
+                _countdownText.text = i.ToString();
+                await UniTask.Delay(System.TimeSpan.FromSeconds(1));
+            }
+
+            _countdownText.text = "GO!";
+            await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
+
+            // Включаем управление
+            _countdownText.gameObject.SetActive(false);
+            _player.enabled = true;
+
+            _stateMachine.ChangeState(_playState); //Переключаемся в игру
+            
         }
 
         public void TogglePause()

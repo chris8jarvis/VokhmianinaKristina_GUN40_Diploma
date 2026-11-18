@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using Cysharp.Threading.Tasks; 
 
 namespace Project.Core.Upgrades
 {
@@ -34,15 +34,15 @@ namespace Project.Core.Upgrades
 
             //Длительность: базовые 3 секунды + 1 секунда за каждый уровень
             float duration = 3f + (_shieldLevel * 1f);
-            StartCoroutine(ShieldRoutine(duration));
+            ShieldRoutine(duration).Forget();
         }
 
-        private IEnumerator ShieldRoutine(float duration)
+        private async UniTask ShieldRoutine(float duration)
         {
             IsActive = true;
             Debug.Log($"Activate shield for {duration} seconds");
-            
-            yield return new WaitForSeconds(duration); //Ждем время
+
+            await UniTask.Delay(System.TimeSpan.FromSeconds(duration));
             
             IsActive = false;
             Debug.Log("Shield inactive");
