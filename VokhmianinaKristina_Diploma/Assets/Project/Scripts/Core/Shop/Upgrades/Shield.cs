@@ -43,6 +43,8 @@ namespace Project.Core.Upgrades
             Debug.Log($"Activate shield for {duration} seconds");
 
             await UniTask.Delay(System.TimeSpan.FromSeconds(duration));
+
+            if (this == null) return;
             
             IsActive = false;
             Debug.Log("Shield inactive");

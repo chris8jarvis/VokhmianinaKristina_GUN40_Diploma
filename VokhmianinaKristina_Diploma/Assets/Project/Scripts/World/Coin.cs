@@ -1,21 +1,34 @@
 using System;
 using UnityEngine;
 using Zenject;
+using Project.Core;
 
 namespace Project.World
 {
     public class Coin : MonoBehaviour, IPoolable<IMemoryPool>, IPoolableObject
     {
-        public static event Action OnCoinCollected;
+        //public static event Action OnCoinCollected;
 
         private IMemoryPool _pool;
+        private Collider _collider;
         private bool _isCollected = false;
+        public bool IsCollected => _isCollected;
+
+        //Внедрение сигнала
+        [Inject] private SignalBus _signalBus;
+
+        private void Awake()
+        {
+            _collider = GetComponent<Collider>();
+        }
 
         //Вызывается, когда монетку достали из пула
         public void OnSpawned(IMemoryPool pool)
         {
             _pool = pool;
             _isCollected = false;
+
+            if (_collider != null) _collider.enabled = true; 
         }
 
         //Вызывается, когда монетку вернули в пул
@@ -35,7 +48,12 @@ namespace Project.World
         public void Collect()
         {
             if (_isCollected) return;
-            OnCoinCollected?.Invoke();
+
+            _isCollected = true;
+
+            if (_collider != null) _collider.enabled = false;
+
+            _signalBus.Fire(new CoinCollectedSignal());
             
             if (_pool != null)
             {

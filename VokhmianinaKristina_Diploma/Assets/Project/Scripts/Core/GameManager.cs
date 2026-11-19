@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using Project.Core.Upgrades;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using Project.Core;
 
 namespace Project.Core
 {
@@ -32,6 +33,7 @@ namespace Project.Core
         public int Score { get; private set; } = 0; //Текущий счет
         public int HighScore { get; private set; } = 0; //Рекорд
         public bool IsGameOver { get; private set; } = false;//Флаг, что игра окончена
+        private static bool _isSubscribed = false;
         private PlayerMovement _player; //Ссылка на игрока (внедряем через Zenject)
         private float _startZ; //Запоминаем позицию игрока
         private float _restartTimer = 0f;
@@ -40,11 +42,13 @@ namespace Project.Core
         private PlayState _playState;
         private PauseState _pauseState;
         private GameOverState _gameOverState;
+        private SignalBus _signalBus;
 
         [Inject]
-        public void Construct(PlayerMovement player)
+        public void Construct(PlayerMovement player, SignalBus signalBus)
         {
             _player = player;
+            _signalBus = signalBus;
         }
 
          private void Awake()
@@ -57,9 +61,9 @@ namespace Project.Core
         }
          private void Start()
         {
+            _player.enabled = false;
             //Загружаем рекорд из сохранений при старте
             HighScore = PlayerPrefs.GetInt("HighScore", 0);
-            
             if (_highScoreText != null) _highScoreText.text = $"Record: {HighScore}";
 
             //Загрузка кошелька
@@ -71,13 +75,26 @@ namespace Project.Core
             //Запоминаем где находится игрок при старте
             _startZ = _player.transform.position.z;
 
-            // Показываем главное меню при старте
+            //Показываем главное меню при старте
             _gameOverPanel.SetActive(false);
             _pausePanel.SetActive(false);
             _mainMenuPanel.SetActive(true);
 
-            Coin.OnCoinCollected += AddCoin;
+            _player.enabled = false;
+
+            //Подписка на сигнал (для монет)
+            // _signalBus.TryUnsubscribe<CoinCollectedSignal>(AddCoin);
+            // _signalBus.Subscribe<CoinCollectedSignal>(AddCoin);
+            // if (!_isSubscribed)
+            // {
+            //     _signalBus.Subscribe<CoinCollectedSignal>(AddCoin);
+            //     _isSubscribed = true;
+            // }
+
+            _player.OnPlayerDied -= HandleGameOver;
             _player.OnPlayerDied += HandleGameOver;
+
+            _signalBus.Subscribe<CoinCollectedSignal>(AddCoin);
             
             Time.timeScale = 0f;
             UpdateUI();
@@ -85,10 +102,8 @@ namespace Project.Core
 
         private void OnDisable()
         {
-            //Отписываемся
-            Coin.OnCoinCollected -= AddCoin;
             if (_player != null) _player.OnPlayerDied -= HandleGameOver;
-        }
+         }
         
         private void Update()
         {
@@ -137,12 +152,18 @@ namespace Project.Core
             //Отсчет
             for (int i = 3; i > 0; i--)
             {
+                if (_countdownText == null) return; 
+
                 _countdownText.text = i.ToString();
                 await UniTask.Delay(System.TimeSpan.FromSeconds(1));
             }
 
+            if (_countdownText == null) return;
+
             _countdownText.text = "GO!";
             await UniTask.Delay(System.TimeSpan.FromSeconds(0.5f));
+
+            if (_countdownText == null) return;
 
             // Включаем управление
             _countdownText.gameObject.SetActive(false);
@@ -191,6 +212,8 @@ namespace Project.Core
 
         private void AddCoin()
         {
+            Debug.Log($"AddCoin: {Coins + 1}");
+            if (_player == null) return;
             //Ищем компонент CoinMultiplier на игроке
             CoinMultiplier multiplier = _player.GetComponent<CoinMultiplier>();
             //Если нашли — берем его значение, если нет — умножаем на 1

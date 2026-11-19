@@ -51,7 +51,7 @@ namespace Project.Player
                     if (Vector3.Distance(coin.position, transform.position) < 1.5f)
                     {
                         Coin coinScript = coin.GetComponent<Coin>();
-                        if (coinScript != null)
+                        if (coinScript != null && !coinScript.IsCollected && coin.gameObject.activeSelf) 
                         {
                             coinScript.Collect();
                         }

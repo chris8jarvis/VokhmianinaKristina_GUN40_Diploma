@@ -17,6 +17,10 @@ namespace Project.Core
         [SerializeField] private GameObject _coinPrefab;
         public override void InstallBindings()
         {
+            SignalBusInstaller.Install(Container);
+
+            Container.DeclareSignal<CoinCollectedSignal>();
+
             Container.Bind<PlayerInputHandler>().FromComponentInHierarchy().AsSingle();
             Container.Bind<PlayerMovement>().FromComponentInHierarchy().AsSingle();
 
