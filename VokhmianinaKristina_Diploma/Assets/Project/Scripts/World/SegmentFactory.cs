@@ -25,24 +25,36 @@ namespace Project.World
         }
 
         //Метод, выдающий препятствия
-        public void PopulateSegment(Transform segmentTransform, float zPosition)
+        public void PopulateSegment(Transform segmentTransform, float zPosition, IZoneStrategy zoneStrategy)
         {
             //Получаем Segment на префабе дороги
             Segment segment = segmentTransform.GetComponent<Segment>();
-
-            int randomLane = Random.Range(0, 3); 
-            float xPosition = (randomLane - 1) * _laneDistance;
-            int randomType = Random.Range(0, 3);
 
             if (segment != null) 
             {
                 segment.Clear(); 
             }
-
+            //Спавн препятствий
+            int randomLane = Random.Range(0, 3); 
+            float xPosition = (randomLane - 1) * _laneDistance;
+            //int randomType = Random.Range(0, 3);
             Obstacle obstacle = null;
-            if (randomType == 0) obstacle = _lowPool.Spawn();
-            else if (randomType == 1) obstacle = _highPool.Spawn();
-            else if (randomType == 2) obstacle = _slidePool.Spawn();
+
+            //Проверяем, какая у нас зона, выбираем пул
+            if (zoneStrategy is CityZone)
+            {
+                //В городе: Low или High (0 или 1)
+                int type = Random.Range(0, 2); 
+                if (type == 0) obstacle = _lowPool.Spawn();
+                else obstacle = _highPool.Spawn();
+            }
+            else if (zoneStrategy is CaveZone)
+            {
+                //В пещере: High или Slide (1 или 2)
+                int type = Random.Range(1, 3); 
+                if (type == 1) obstacle = _highPool.Spawn();
+                else obstacle = _slidePool.Spawn();
+            }
 
             if (obstacle != null)
             {
