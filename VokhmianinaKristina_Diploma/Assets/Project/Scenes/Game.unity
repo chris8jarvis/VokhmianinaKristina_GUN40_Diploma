@@ -861,6 +861,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b84e81020529a4fb02bdf4139f44c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &339204044 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400000, guid: 81007139cb013d74dade2263bc62dfec, type: 3}
+  m_PrefabInstance: {fileID: 1052519939}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &376480236
 GameObject:
   m_ObjectHideFlags: 0
@@ -2328,7 +2333,12 @@ MonoBehaviour:
   _segmentPrefab: {fileID: 766043424110336334, guid: d08c5a12abc1d134b9015c19763eb3e9, type: 3}
   _poolSize: 5
   _segmentLength: 10
-  _player: {fileID: 0}
+  _player: {fileID: 339204044}
+  _directionalLight: {fileID: 705507994}
+  _cityLowPrefab: {fileID: 4215436807478174125, guid: 75b690a9018e5ea4fa43c1287a2adcd1, type: 3}
+  _cityHighPrefab: {fileID: 5723123284718553597, guid: 42b1e3a0efe01214281698e1d143d3f7, type: 3}
+  _caveHighPrefab: {fileID: 5723123284718553597, guid: 42b1e3a0efe01214281698e1d143d3f7, type: 3}
+  _caveSlidePrefab: {fileID: 2468449697880859058, guid: 99006cbe37e8232418301a42a83f1b11, type: 3}
 --- !u!4 &753426180
 Transform:
   m_ObjectHideFlags: 0
