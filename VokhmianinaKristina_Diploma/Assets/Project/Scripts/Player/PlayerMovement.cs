@@ -115,7 +115,8 @@ namespace Project.Player
         {
             if (hit.gameObject.name.Contains("Obstacle") || hit.gameObject.CompareTag("Obstacle"))
             {
-                if (_shield != null && _shield.IsActive) 
+                //Если щит активировался (или уже активен) — урона нет
+                if (_shield != null && _shield.TryActivateShield())
                 {
                     return; 
                 }

@@ -7,47 +7,50 @@ namespace Project.Core.Upgrades
     {
         public bool IsActive { get; private set; } = false;
         private int _shieldLevel = 0;
+        private float _timer = 0f; //Таймер обратного отсчета
+        private bool _wasUsed = false;
 
         private void Start()
         {
             //Читаем уровень из сохранений
             _shieldLevel = PlayerPrefs.GetInt("Shield_Level", 0);
-            
-            if (_shieldLevel > 0)
-            {
-                Activate(); //Если куплен, включаем сразу при старте
-            }
         }
 
         //Метод для обновления уровня
         public void SetLevel(int level)
         {
             _shieldLevel = level;
-            Debug.Log($"Shield level: {_shieldLevel}");
+            //Debug.Log($"Shield level: {_shieldLevel}");
         }
 
         //Метод для активации щита во время бега
-        public void Activate()
+        public bool TryActivateShield()
         {
-            if (_shieldLevel <= 0) return; //Если не куплен, то не работает
-            if (IsActive) return; //Если уже активен, то не включаем заново
+            if (_shieldLevel <= 0) return false; //Нет щита — урон проходит
+            if (IsActive) return true; //Уже активен — урон игнорируется
+            if (_wasUsed) return false;
 
-            //Длительность: базовые 3 секунды + 1 секунда за каждый уровень
-            float duration = 3f + (_shieldLevel * 1f);
-            ShieldRoutine(duration).Forget();
+            //Активация щита
+            IsActive = true;
+            _wasUsed = true;
+            _timer = 3f + (_shieldLevel * 1f); //Длительность
+            Debug.Log($"Щит активирован на {_timer} секунд!");
+            
+            return true;
         }
 
-        private async UniTask ShieldRoutine(float duration)
+        private void Update()
         {
-            IsActive = true;
-            Debug.Log($"Activate shield for {duration} seconds");
+            if (!IsActive) return;
 
-            await UniTask.Delay(System.TimeSpan.FromSeconds(duration));
+            //Уменьшаем таймер
+            _timer -= Time.deltaTime;
 
-            if (this == null) return;
-            
-            IsActive = false;
-            Debug.Log("Shield inactive");
+            if (_timer <= 0)
+            {
+                IsActive = false;
+                Debug.Log("Щит уничтожился");
+            }
         }
     }
 }
