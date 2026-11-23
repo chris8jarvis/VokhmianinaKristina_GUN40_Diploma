@@ -34,10 +34,16 @@ namespace Project.World
             {
                 segment.Clear(); 
             }
+            
+            if (segmentTransform.position.z < 40f)
+            {
+                return;
+            }
+
             //Спавн препятствий
             int randomLane = Random.Range(0, 3); 
             float xPosition = (randomLane - 1) * _laneDistance;
-            //int randomType = Random.Range(0, 3);
+
             Obstacle obstacle = null;
 
             //Проверяем, какая у нас зона, выбираем пул
@@ -65,7 +71,7 @@ namespace Project.World
                 }
             }
 
-            //Монетки
+            //Спавн Монеток
             int coinCount = Random.Range(1, 3); 
             for (int i = 0; i < coinCount; i++)
             {

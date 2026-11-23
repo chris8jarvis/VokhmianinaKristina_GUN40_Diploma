@@ -9,6 +9,7 @@ using Project.Core.Upgrades;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Project.Core;
+using System.Linq;
 
 namespace Project.Core
 {
@@ -33,7 +34,6 @@ namespace Project.Core
         public int Score { get; private set; } = 0; //Текущий счет
         public int HighScore { get; private set; } = 0; //Рекорд
         public bool IsGameOver { get; private set; } = false;//Флаг, что игра окончена
-        private static bool _isSubscribed = false;
         private PlayerMovement _player; //Ссылка на игрока (внедряем через Zenject)
         private float _startZ; //Запоминаем позицию игрока
         private float _restartTimer = 0f;
@@ -59,8 +59,11 @@ namespace Project.Core
             _pauseState = new PauseState(this);
             _gameOverState = new GameOverState(this);
         }
-         private void Start()
+        private void Start()
         {
+            FindObjectsOfType<Obstacle>().ToList().ForEach(o => o.Despawn());
+            FindObjectsOfType<Coin>().ToList().ForEach(c => c.Despawn());
+
             _player.enabled = false;
             //Загружаем рекорд из сохранений при старте
             HighScore = PlayerPrefs.GetInt("HighScore", 0);
@@ -79,17 +82,6 @@ namespace Project.Core
             _gameOverPanel.SetActive(false);
             _pausePanel.SetActive(false);
             _mainMenuPanel.SetActive(true);
-
-            _player.enabled = false;
-
-            //Подписка на сигнал (для монет)
-            // _signalBus.TryUnsubscribe<CoinCollectedSignal>(AddCoin);
-            // _signalBus.Subscribe<CoinCollectedSignal>(AddCoin);
-            // if (!_isSubscribed)
-            // {
-            //     _signalBus.Subscribe<CoinCollectedSignal>(AddCoin);
-            //     _isSubscribed = true;
-            // }
 
             _player.OnPlayerDied -= HandleGameOver;
             _player.OnPlayerDied += HandleGameOver;
