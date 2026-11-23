@@ -56,6 +56,7 @@ namespace Project.World
             }
             _currentStrategy = new CityZone(_cityLowPrefab, _cityHighPrefab);
             _directionalLight.color = _currentStrategy.GetLightColor();
+            RenderSettings.fog = false;
         }
 
         private void Update()
@@ -79,14 +80,15 @@ namespace Project.World
                 if (_isCityZone)
                 {
                     _currentStrategy = new CityZone(_cityLowPrefab, _cityHighPrefab);
-                    _directionalLight.color = new Color(0.5f, 0.7f, 1f);
+                    _directionalLight.color = _currentStrategy.GetLightColor();
                     RenderSettings.fog = false;
                     Debug.Log("Переход в зону города");
                 }
                 else
                 {
                     _currentStrategy = new CaveZone(_caveHighPrefab, _caveSlidePrefab);
-                    _directionalLight.color = new Color(0.2f, 0.1f, 0.1f);
+                    _directionalLight.color = _currentStrategy.GetLightColor();
+                    
                     RenderSettings.fog = true;
                     RenderSettings.fogColor = new Color(0.1f, 0.05f, 0.05f);
                     RenderSettings.fogDensity = 0.05f;
