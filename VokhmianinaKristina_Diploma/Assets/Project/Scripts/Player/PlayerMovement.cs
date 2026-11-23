@@ -68,7 +68,7 @@ namespace Project.Player
             //Прыжок
             if (_controller.isGrounded)
             {
-                if (_verticalVelocity < 0) _verticalVelocity = -2f; // Прижимаем к земле
+                if (_verticalVelocity < 0) _verticalVelocity = -2f; //Прижимаем к земле
 
                 if (_inputHandler.JumpCommand != null)
                 {
@@ -80,15 +80,15 @@ namespace Project.Player
             moveVector.y = _verticalVelocity;
 
 
-            // Подкат
-            // Если игрок нажал S и находится не в подкате
+            //Подкат
+            //Если игрок нажал S и находится не в подкате
             if (_inputHandler.SlideRequested && _activeSlideCommand == null && _controller.isGrounded)
             {
                 _activeSlideCommand = new SlideCommand(_controller, slideDuration, _normalHeight, slideHeight);
                 _activeSlideCommand.Execute();
             }
 
-            // Если подкат уже активен - обновляем его таймер
+            //Если подкат уже активен - обновляем его таймер
             if (_activeSlideCommand != null)
             {
                 _activeSlideCommand.Tick(Time.deltaTime);
@@ -99,7 +99,7 @@ namespace Project.Player
                 }
             }
 
-            // Движение
+            //Движение
             _controller.Move(moveVector * Time.deltaTime);
         }
 
@@ -108,7 +108,7 @@ namespace Project.Player
             if (IsDead) return;
             IsDead = true;
             OnPlayerDied?.Invoke();
-            Debug.Log("Player died");
+            //Debug.Log("Player died");
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)

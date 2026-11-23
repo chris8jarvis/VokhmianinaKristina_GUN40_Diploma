@@ -65,6 +65,7 @@ namespace Project.Core
             FindObjectsOfType<Coin>().ToList().ForEach(c => c.Despawn());
 
             _player.enabled = false;
+
             //Загружаем рекорд из сохранений при старте
             HighScore = PlayerPrefs.GetInt("HighScore", 0);
             if (_highScoreText != null) _highScoreText.text = $"Record: {HighScore}";
@@ -106,7 +107,7 @@ namespace Project.Core
             Score = Mathf.Max(0, Mathf.FloorToInt(distance));
             UpdateUI();
 
-            // Обработка паузы (TAB)
+            //Обработка паузы (TAB)
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 TogglePause();
@@ -137,6 +138,7 @@ namespace Project.Core
         {
             _mainMenuPanel.SetActive(false);
             Time.timeScale = 1f;
+
             //Блокировка управления, чтобы игрок не бежал раньше времени отсчета
             _player.enabled = false; 
             _countdownText.gameObject.SetActive(true);
@@ -182,7 +184,7 @@ namespace Project.Core
         public void RestartGame()
         {
             //Перезагружаем текущую сцену
-            Debug.Log("Рестарт игры");
+            //Debug.Log("Рестарт игры");
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -191,7 +193,8 @@ namespace Project.Core
         {
             PlayerPrefs.DeleteAll(); //Удаляем все сохранения
             PlayerPrefs.Save();
-            Debug.Log("Прогресс сброшен");
+            //Debug.Log("Прогресс сброшен");
+
             //Перезагружаем сцену, чтобы обновить UI
             RestartGame(); 
         }
@@ -199,15 +202,17 @@ namespace Project.Core
         public void QuitGame()
         {
             Application.Quit();
-            Debug.Log("Игра закончена");
+            //Debug.Log("Игра закончена");
         }
 
         private void AddCoin()
         {
-            Debug.Log($"AddCoin: {Coins + 1}");
+            //Debug.Log($"AddCoin: {Coins + 1}");
             if (_player == null) return;
+
             //Ищем компонент CoinMultiplier на игроке
             CoinMultiplier multiplier = _player.GetComponent<CoinMultiplier>();
+
             //Если нашли — берем его значение, если нет — умножаем на 1
             int amount = (multiplier != null) ? multiplier.Multiplier : 1;
             Coins += amount;
@@ -240,7 +245,7 @@ namespace Project.Core
                 HighScore = Score;
                 PlayerPrefs.SetInt("HighScore", HighScore);
                 PlayerPrefs.Save();
-                Debug.Log("Новый рекорд");
+                //Debug.Log("Новый рекорд");
             }
 
             if (_highScoreText != null) 

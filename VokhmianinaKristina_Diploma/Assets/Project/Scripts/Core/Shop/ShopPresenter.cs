@@ -46,7 +46,8 @@ namespace Project.Core.Shop
             bool success = _shopService.TryBuyUpgrade(data);
             if (success)
             {
-                Debug.Log($"Receive Upgrade: {data.UpgradeName}");
+                //Debug.Log($"Receive Upgrade: {data.UpgradeName}");
+                
                 //Если купили магнит — улучшаем его
                 if (data.UpgradeName == "Magnet")
                 {
